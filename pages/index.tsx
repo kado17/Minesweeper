@@ -21,7 +21,7 @@ const Board = styled.div`
 const Face = styled.div`
   height: 10vh;
   width: 10vh;
-  background: yellow;
+  background: #ffff00;
   border-radius: 50%;
 `
 
