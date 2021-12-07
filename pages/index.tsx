@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
-
   align-items: center;
   justify-content: center;
   height: 100vh;
@@ -11,7 +10,6 @@ const Container = styled.div`
 `
 const Board = styled.div`
   display: flex;
-
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
@@ -29,7 +27,6 @@ const Face = styled.div`
 
 const Game_Board = styled.div`
   display: flex;
-
   flex-wrap: wrap;
   align-content: space-around;
   justify-content: space-around;
