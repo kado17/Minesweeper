@@ -3,18 +3,20 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
-  height: 100vh;
+
   align-items: center;
   justify-content: center;
+  height: 100vh;
   background: #008080;
 `
 const Board = styled.div`
   display: flex;
-  width: 60vh;
-  height: 80vh;
+
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+  width: 60vh;
+  height: 80vh;
   background: #aaa;
 `
 
@@ -27,11 +29,12 @@ const Face = styled.div`
 
 const Game_Board = styled.div`
   display: flex;
-  width: 58vh;
-  height: 58vh;
+
   flex-wrap: wrap;
   align-content: space-around;
   justify-content: space-around;
+  width: 58vh;
+  height: 58vh;
   background: #ccc;
 `
 
