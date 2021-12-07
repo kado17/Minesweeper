@@ -2,17 +2,16 @@ import type { NextPage } from 'next'
 import styled from 'styled-components'
 
 const Container = styled.div`
-  height: 100vh;
   display: flex;
+  height: 100vh;
   align-items: center;
   justify-content: center;
-
   background: #008080;
 `
 const Board = styled.div`
+  display: flex;
   width: 60vh;
   height: 80vh;
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
@@ -27,12 +26,12 @@ const Face = styled.div`
 `
 
 const Game_Board = styled.div`
+  display: flex;
   width: 58vh;
   height: 58vh;
-  display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
   align-content: space-around;
+  justify-content: space-around;
   background: #ccc;
 `
 
