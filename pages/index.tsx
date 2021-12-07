@@ -3,42 +3,43 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   height: 100vh;
-  background: #008080;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  background: #008080;
 `
 const Board = styled.div`
-  height: 80vh;
   width: 60vh;
-  background: #aaaaaa;
+  height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   align-items: center;
+  justify-content: space-around;
+  background: #aaa;
 `
 
 const Face = styled.div`
-  height: 10vh;
   width: 10vh;
-  background: #ffff00;
+  height: 10vh;
+  background: #ff0;
   border-radius: 50%;
 `
 
 const Game_Board = styled.div`
-  height: 58vh;
   width: 58vh;
-  background: #cccccc;
+  height: 58vh;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   align-content: space-around;
+  background: #ccc;
 `
 
 const Game_Block = styled.div`
-  height: 6vh;
   width: 6vh;
-  background: #999999;
+  height: 6vh;
+  background: #999;
 `
 
 const Home: NextPage = () => {
