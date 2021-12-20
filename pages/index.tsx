@@ -74,19 +74,39 @@ const Home: NextPage = () => {
     [9, 9, 9, 9, 9, 9, 9, 9, 9],
     [9, 9, 9, 9, 9, 9, 9, 9, 9]
   ])
-  const [bombs, setBombs] = useState([{ x: 0, y: 0 }])
+
+  const tmpBombs: { x: number; y: number }[] = []
+  while (tmpBombs.length < 10) {
+    const random_x = Math.floor(Math.random() * 9) //0～9までの整数を出力
+    const random_y = Math.floor(Math.random() * 9)
+    if (!tmpBombs.some((b) => b.x === random_x && b.y === random_y)) {
+      tmpBombs.push({ x: random_x, y: random_y })
+    }
+  }
+  const [bombs, setBombs] = useState(tmpBombs)
   const onClick = (x: number, y: number) => {
-    console.log(x, y)
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
-    newBoard[y][x] = 1
+
+    let newNum = 0
+
     let existsBomb = false
+    // 爆弾があるか判定
     for (let i = 0; i < bombs.length; i++) {
       if (bombs[i].x === x && bombs[i].y === y) {
         existsBomb = true
       }
     }
-    newBoard[y][x] = existsBomb ? 10 : 1
-    setBoard(newBoard)
+    if (!existsBomb) {
+      for (let xi = -1; xi < 2; xi++) {
+        for (let yi = -1; yi < 2; yi++) {
+          if (bombs.some((b) => b.x === x + xi && b.y === y + yi)) {
+            newNum++
+          }
+        }
+      }
+    }
+
+    newBoard[y][x] = existsBomb ? 10 : newNum // = newNum 爆弾があれば10 なければ数字を返す
   }
   return (
     <Container>
