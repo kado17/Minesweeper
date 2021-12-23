@@ -77,18 +77,18 @@ const Home: NextPage = () => {
 
   const tmpBombs: { x: number; y: number }[] = []
   while (tmpBombs.length < 10) {
-    const random_x = Math.floor(Math.random() * 9) //0～9までの整数を出力
-    const random_y = Math.floor(Math.random() * 9)
-    if (!tmpBombs.some((b) => b.x === random_x && b.y === random_y)) {
-      tmpBombs.push({ x: random_x, y: random_y })
+    const randomX = Math.floor(Math.random() * 9) //0～9までの整数を出力
+    const randomY = Math.floor(Math.random() * 9)
+    if (!tmpBombs.some((b) => b.x === randomX && b.y === randomY)) {
+      tmpBombs.push({ x: randomX, y: randomY })
     }
   }
   const [bombs, setBombs] = useState(tmpBombs)
+
   const onClick = (x: number, y: number) => {
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
 
     let newNum = 0
-
     let existsBomb = false
     // 爆弾があるか判定
     for (let i = 0; i < bombs.length; i++) {
@@ -97,16 +97,56 @@ const Home: NextPage = () => {
       }
     }
     if (!existsBomb) {
-      for (let xi = -1; xi < 2; xi++) {
-        for (let yi = -1; yi < 2; yi++) {
-          if (bombs.some((b) => b.x === x + xi && b.y === y + yi)) {
-            newNum++
-          }
+      for (let xi = x - 1; xi < x + 2; xi++) {
+        for (let yi = y - 1; yi < y + 2; yi++) {
+          if (bombs.some((b) => b.x === xi && b.y === yi)) newNum++
         }
       }
     }
 
-    newBoard[y][x] = existsBomb ? 10 : newNum // = newNum 爆弾があれば10 なければ数字を返す
+    newBoard[y][x] = existsBomb ? 10 : newNum // 爆弾があれば10 なければ数字を入れる
+    setBoard(newBoard)
+
+    const wipBlock = []
+    // クリックした場所の周囲の座標をリストに格納
+    if (newNum === 0 && !existsBomb) {
+      for (let xi = x - 1; xi < x + 2; xi++) {
+        for (let yi = y - 1; yi < y + 2; yi++) {
+          if (0 <= xi && xi < 9 && 0 <= yi && yi < 9 && { x: x, y: y } !== { x: xi, y: yi }) {
+            wipBlock.push({ x: xi, y: yi })
+          }
+        }
+      }
+      //リストに入っている座標を順番に処理
+      for (const wip of wipBlock) {
+        let FollowNewNum = 0
+        for (let xi = wip.x - 1; xi < wip.x + 2; xi++) {
+          for (let yi = wip.y - 1; yi < wip.y + 2; yi++) {
+            if (bombs.some((b) => b.x === xi && b.y === yi)) {
+              FollowNewNum++
+            }
+          }
+        }
+        newBoard[wip.y][wip.x] = FollowNewNum
+        setBoard(newBoard)
+        //処理したブロックの値が0ならば、その周囲の座標をリストに格納
+        if (FollowNewNum === 0) {
+          for (let xj = wip.x - 1; xj < wip.x + 2; xj++) {
+            for (let yj = wip.y - 1; yj < wip.y + 2; yj++) {
+              if (
+                0 <= xj &&
+                xj < 9 &&
+                0 <= yj &&
+                yj < 9 &&
+                { x: wip.x, y: wip.y } !== { x: xj, y: yj }
+              ) {
+                if (!wipBlock.some((w) => w.x === xj && w.y === yj)) wipBlock.push({ x: xj, y: yj })
+              }
+            }
+          }
+        }
+      }
+    }
   }
   return (
     <Container>
