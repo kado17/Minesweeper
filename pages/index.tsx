@@ -61,6 +61,20 @@ const BombBlock = styled.div`
   border: 1px solid black;
 `
 
+const FlagBlock = styled.div`
+  display: inline-block;
+  vertical-align: bottom;
+  text-align: center;
+  font-weight: bold;
+  line-height: 4.25vh;
+  font-size: 6vh;
+  background: gray;
+  color: red;
+  width: 6vh;
+  height: 6vh;
+  border: 1px solid black;
+`
+
 const Home: NextPage = () => {
   // prettier-ignore
   const [board, setBoard] = useState([
@@ -148,6 +162,17 @@ const Home: NextPage = () => {
       }
     }
   }
+
+  const rightClick = (x: number, y: number, e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const newBoard: number[][] = JSON.parse(JSON.stringify(board))
+    console.log('RIGHT', y, x, newBoard[y][x])
+    if (newBoard[y][x] === 11) newBoard[y][x] = 9
+    else if (newBoard[y][x] === 9) newBoard[y][x] = 11
+    console.log(newBoard[y][x])
+    setBoard(newBoard)
+    return false
+  }
   return (
     <Container>
       <Board>
@@ -157,12 +182,27 @@ const Home: NextPage = () => {
             row.map((num, x) =>
               num === 10 ? (
                 <BombBlock key={`${x}-${y}`}>●</BombBlock>
+              ) : num === 11 ? (
+                <FlagBlock
+                  key={`${x}-${y}`}
+                  onContextMenu={(e) => {
+                    rightClick(x, y, e)
+                  }}
+                >
+                  F
+                </FlagBlock>
               ) : (
                 <GameBlock
                   key={`${x}-${y}`}
                   isOpen={num < 9}
                   num={num}
-                  onClick={() => onClick(x, y)}
+                  onContextMenu={(e) => {
+                    rightClick(x, y, e)
+                  }}
+                  onClick={(e) => {
+                    console.log(e)
+                    onClick(x, y)
+                  }}
                 >
                   {0 < num && num < 9 && num}
                 </GameBlock>
