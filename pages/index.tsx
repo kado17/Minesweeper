@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-const FONT_COLORS = ['blue', 'green', 'red', 'purple', 'brown', 'cyan', 'orange', 'pink']
+const IMAGE = 'images/img.png'
 
 const Container = styled.div`
   display: flex;
@@ -24,8 +24,12 @@ const Board = styled.div`
 const Face = styled.div`
   width: 10vh;
   height: 10vh;
-  background: yellow;
   border-radius: 50%;
+  background-image: url(${IMAGE});
+  background-repeat: no-repeat;
+  background-size: 140vh 10vh;
+  background-position: -110vh 0;
+  background-origin: border-box;
 `
 
 const GameBoard = styled.div`
@@ -36,26 +40,27 @@ const GameBoard = styled.div`
 const GameBlock = styled.div<{ isOpen: boolean; num: number }>`
   display: inline-block;
   vertical-align: bottom;
-  text-align: center;
-  font-weight: bold;
-  line-height: 5.5vh;
-  font-size: 3vh;
-  color: ${(props) => (1 <= props.num && props.num <= 8 ? FONT_COLORS[props.num - 1] : 'black')};
   width: 6vh;
   height: 6vh;
   border: 1px solid black;
   background: ${(props) => (props.isOpen ? 'white' : 'gray')};
+  background-image: url(${IMAGE});
+  background-repeat: no-repeat;
+  background-size: 84vh 6vh;
+  background-position: ${(props) =>
+      1 <= props.num && props.num <= 8 ? String(-6 * (props.num - 1)) + 'vh' : '100vh'}
+    0;
 `
 
 const BombBlock = styled.div`
   display: inline-block;
   vertical-align: bottom;
-  text-align: center;
-  font-weight: bold;
-  line-height: 4.25vh;
   font-size: 6vh;
   background: white;
-  color: red;
+  background-image: url(${IMAGE});
+  background-repeat: no-repeat;
+  background-size: 84vh 6vh;
+  background-position: -60vh 0;
   width: 6vh;
   height: 6vh;
   border: 1px solid black;
@@ -64,12 +69,11 @@ const BombBlock = styled.div`
 const FlagBlock = styled.div`
   display: inline-block;
   vertical-align: bottom;
-  text-align: center;
-  font-weight: bold;
-  line-height: 4.25vh;
-  font-size: 6vh;
-  background: gray;
-  color: red;
+  background-color: gray;
+  background-image: url(${IMAGE});
+  background-repeat: no-repeat;
+  background-size: 84vh 6vh;
+  background-position: -54vh 0;
   width: 6vh;
   height: 6vh;
   border: 1px solid black;
@@ -166,10 +170,8 @@ const Home: NextPage = () => {
   const rightClick = (x: number, y: number, e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
-    console.log('RIGHT', y, x, newBoard[y][x])
     if (newBoard[y][x] === 11) newBoard[y][x] = 9
     else if (newBoard[y][x] === 9) newBoard[y][x] = 11
-    console.log(newBoard[y][x])
     setBoard(newBoard)
     return false
   }
@@ -181,16 +183,14 @@ const Home: NextPage = () => {
           {board.map((row, y) =>
             row.map((num, x) =>
               num === 10 ? (
-                <BombBlock key={`${x}-${y}`}>●</BombBlock>
+                <BombBlock key={`${x}-${y}`}></BombBlock>
               ) : num === 11 ? (
                 <FlagBlock
                   key={`${x}-${y}`}
                   onContextMenu={(e) => {
                     rightClick(x, y, e)
                   }}
-                >
-                  F
-                </FlagBlock>
+                ></FlagBlock>
               ) : (
                 <GameBlock
                   key={`${x}-${y}`}
@@ -203,9 +203,7 @@ const Home: NextPage = () => {
                     console.log(e)
                     onClick(x, y)
                   }}
-                >
-                  {0 < num && num < 9 && num}
-                </GameBlock>
+                ></GameBlock>
               )
             )
           )}
