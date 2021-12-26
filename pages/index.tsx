@@ -81,7 +81,7 @@ const FlagBlock = styled.div`
 
 const Home: NextPage = () => {
   // prettier-ignore
-  const [board, setBoard] = useState([
+  const startBoard = [
     [9, 9, 9, 9, 9, 9, 9, 9, 9],
     [9, 9, 9, 9, 9, 9, 9, 9, 9],
     [9, 9, 9, 9, 9, 9, 9, 9, 9],
@@ -91,17 +91,21 @@ const Home: NextPage = () => {
     [9, 9, 9, 9, 9, 9, 9, 9, 9],
     [9, 9, 9, 9, 9, 9, 9, 9, 9],
     [9, 9, 9, 9, 9, 9, 9, 9, 9]
-  ])
-
-  const tmpBombs: { x: number; y: number }[] = []
-  while (tmpBombs.length < 10) {
-    const randomX = Math.floor(Math.random() * 9) //0～9までの整数を出力
-    const randomY = Math.floor(Math.random() * 9)
-    if (!tmpBombs.some((b) => b.x === randomX && b.y === randomY)) {
-      tmpBombs.push({ x: randomX, y: randomY })
+  ]
+  const createBomb = () => {
+    const tmpBombs: { x: number; y: number }[] = []
+    while (tmpBombs.length < 10) {
+      const randomX = Math.floor(Math.random() * 9) //0～9までの整数を出力
+      const randomY = Math.floor(Math.random() * 9)
+      if (!tmpBombs.some((b) => b.x === randomX && b.y === randomY)) {
+        tmpBombs.push({ x: randomX, y: randomY })
+      }
     }
+    return tmpBombs
   }
-  const [bombs, setBombs] = useState(tmpBombs)
+
+  const [board, setBoard] = useState(startBoard)
+  const [bombs, setBombs] = useState(createBomb())
 
   const onClick = (x: number, y: number) => {
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
@@ -173,12 +177,15 @@ const Home: NextPage = () => {
     if (newBoard[y][x] === 11) newBoard[y][x] = 9
     else if (newBoard[y][x] === 9) newBoard[y][x] = 11
     setBoard(newBoard)
-    return false
+  }
+  const reset = () => {
+    setBoard(startBoard)
+    setBombs(createBomb())
   }
   return (
     <Container>
       <Board>
-        <Face></Face>
+        <Face onClick={() => reset()}></Face>
         <GameBoard>
           {board.map((row, y) =>
             row.map((num, x) =>
@@ -196,13 +203,8 @@ const Home: NextPage = () => {
                   key={`${x}-${y}`}
                   isOpen={num < 9}
                   num={num}
-                  onContextMenu={(e) => {
-                    rightClick(x, y, e)
-                  }}
-                  onClick={(e) => {
-                    console.log(e)
-                    onClick(x, y)
-                  }}
+                  onClick={() => onClick(x, y)}
+                  onContextMenu={(e) => rightClick(x, y, e)}
                 ></GameBlock>
               )
             )
