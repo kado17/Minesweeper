@@ -21,14 +21,14 @@ const Board = styled.div`
   background: #ccc;
 `
 
-const Face = styled.div`
+const Face = styled.div<{ faceState: number }>`
   width: 10vh;
   height: 10vh;
   border-radius: 50%;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
   background-size: 140vh 10vh;
-  background-position: -110vh 0;
+  background-position: ${(props) => String(props.faceState * -10) + 'vh'} 0;
   background-origin: border-box;
 `
 
@@ -106,10 +106,15 @@ const Home: NextPage = () => {
 
   const [board, setBoard] = useState(startBoard)
   const [bombs, setBombs] = useState(createBomb())
+  const [state, setState] = useState({ isGameclear: false, isGameover: false })
 
   const onClick = (x: number, y: number) => {
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
 
+    if (state.isGameclear || state.isGameover) {
+      return
+    }
+    console.log(bombs)
     let newNum = 0
     let existsBomb = false
     // 爆弾があるか判定
@@ -121,17 +126,24 @@ const Home: NextPage = () => {
     if (!existsBomb) {
       for (let xi = x - 1; xi < x + 2; xi++) {
         for (let yi = y - 1; yi < y + 2; yi++) {
-          if (bombs.some((b) => b.x === xi && b.y === yi)) newNum++
+          if (bombs.some((b) => b.x === xi && b.y === yi)) {
+            newNum++
+          }
         }
       }
     }
-
     newBoard[y][x] = existsBomb ? 10 : newNum // 爆弾があれば10 なければ数字を入れる
-    setBoard(newBoard)
+    if (existsBomb) {
+      //敗北処理
+      setState({ ...state, isGameover: true })
+      for (const bom of bombs) {
+        newBoard[bom.y][bom.x] = 10
+      }
+    }
 
-    const wipBlock = []
     // クリックした場所の周囲の座標をリストに格納
     if (newNum === 0 && !existsBomb) {
+      const wipBlock = []
       for (let xi = x - 1; xi < x + 2; xi++) {
         for (let yi = y - 1; yi < y + 2; yi++) {
           if (0 <= xi && xi < 9 && 0 <= yi && yi < 9 && { x: x, y: y } !== { x: xi, y: yi }) {
@@ -150,7 +162,7 @@ const Home: NextPage = () => {
           }
         }
         newBoard[wip.y][wip.x] = FollowNewNum
-        setBoard(newBoard)
+
         //処理したブロックの値が0ならば、その周囲の座標をリストに格納
         if (FollowNewNum === 0) {
           for (let xj = wip.x - 1; xj < wip.x + 2; xj++) {
@@ -162,30 +174,56 @@ const Home: NextPage = () => {
                 yj < 9 &&
                 { x: wip.x, y: wip.y } !== { x: xj, y: yj }
               ) {
-                if (!wipBlock.some((w) => w.x === xj && w.y === yj)) wipBlock.push({ x: xj, y: yj })
+                if (!wipBlock.some((w) => w.x === xj && w.y === yj)) {
+                  wipBlock.push({ x: xj, y: yj })
+                }
               }
             }
           }
         }
       }
     }
+
+    let notOpenBlockCount = 0
+    for (const row of newBoard) {
+      notOpenBlockCount += row.filter((num) => num === 9 || num === 11).length
+    }
+    //勝利判定 爆弾の数10
+    if (notOpenBlockCount === 10) {
+      setState({ ...state, isGameclear: true })
+      for (const bom of bombs) {
+        newBoard[bom.y][bom.x] = 11
+      }
+    }
+    setBoard(newBoard)
   }
 
   const rightClick = (x: number, y: number, e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
+    if (state.isGameclear || state.isGameover) {
+      return
+    }
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
-    if (newBoard[y][x] === 11) newBoard[y][x] = 9
-    else if (newBoard[y][x] === 9) newBoard[y][x] = 11
+    if (newBoard[y][x] === 11) {
+      newBoard[y][x] = 9
+    } else if (newBoard[y][x] === 9) {
+      newBoard[y][x] = 11
+    }
     setBoard(newBoard)
   }
   const reset = () => {
     setBoard(startBoard)
     setBombs(createBomb())
+    setState({ isGameclear: false, isGameover: false })
   }
+
   return (
     <Container>
       <Board>
-        <Face onClick={() => reset()}></Face>
+        <Face
+          faceState={state.isGameover ? 13 : state.isGameclear ? 12 : 11}
+          onClick={() => reset()}
+        ></Face>
         <GameBoard>
           {board.map((row, y) =>
             row.map((num, x) =>
