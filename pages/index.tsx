@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #008080;
+  background-color: #008080;
 `
 const Board = styled.div`
   display: flex;
@@ -18,39 +18,44 @@ const Board = styled.div`
   justify-content: space-around;
   width: 60vh;
   height: 80vh;
-  background: #ccc;
+  background-color: #ccc;
+  border: 6px solid;
+  border-color: #ddd #666 #666 #ddd;
 `
 const StateBoard = styled.div`
-  width: 54vh;
-  height: 12vh;
-  border: 2px solid black;
+  display: flex;
   flex-direction: row;
   align-items: center;
-  display: flex;
   justify-content: space-around;
+  width: 54vh;
+  height: 12vh;
+  border: 5px solid;
+  border-color: #666 #ddd #ddd #666;
 `
 const Flagcouner = styled.div`
+  display: inline;
   width: 16vh;
   height: 10vh;
-  border: 2px solid black;
-  display: inline;
-  background-color: black;
   font-size: 9vh;
+  line-height: 8.5vh;
   color: red;
   text-align: center;
-  line-height: 8.5vh;
+  background-color: black;
+  border: 3px solid black;
+  border-color: #666 #ddd #ddd #666;
 `
 
 const CountUpTimer = styled.div`
+  display: inline;
   width: 16vh;
   height: 10vh;
-  border: 2px solid black;
-  display: inline;
-  background-color: black;
   font-size: 9vh;
+  line-height: 8.5vh;
   color: red;
   text-align: center;
-  line-height: 8.5vh;
+  background-color: black;
+  border: 3px solid black;
+  border-color: #666 #ddd #ddd #666;
 `
 
 const Face = styled.div<{ faceState: number }>`
@@ -58,27 +63,28 @@ const Face = styled.div<{ faceState: number }>`
   height: 10vh;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-size: 140vh 10vh;
   background-position: ${(props) => (-10 * props.faceState).toString() + 'vh'} 0;
   background-origin: border-box;
-  border: 2px solid black;
+  background-size: 140vh 10vh;
+  border: 5px solid;
+  border-color: #ddd #666 #666 #ddd;
 `
 
 const GameBoard = styled.div`
-  width: 54vh;
-  height: 54vh;
+  width: 56vh;
+  height: 56vh;
+  border: 1vh solid;
+  border-color: #666 #ddd #ddd #666;
 `
 
 const GameBlock = styled.div<{ isOpen: boolean; num: number }>`
   display: inline-block;
-  vertical-align: bottom;
   width: 6vh;
   height: 6vh;
-  border: 1px solid black;
+  vertical-align: bottom;
   background: ${(props) => (props.isOpen ? 'white' : 'gray')};
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-size: 84vh 6vh;
   background-position: ${(props) =>
       1 <= props.num && props.num <= 8
         ? (-6 * (props.num - 1)).toString() + 'vh'
@@ -86,20 +92,25 @@ const GameBlock = styled.div<{ isOpen: boolean; num: number }>`
         ? (-6 * (props.num - 3)).toString() + 'vh'
         : '100vh'}
     0;
+  background-size: 84vh 6vh;
+  ${(props) =>
+    props.isOpen
+      ? 'border: 1px solid #666;'
+      : 'border: 5px solid;' + 'border-color: #bbb #666 #666 #bbb;'}
 `
 
 const BombBlock = styled.div`
   display: inline-block;
-  vertical-align: bottom;
+  width: 6vh;
+  height: 6vh;
   font-size: 6vh;
+  vertical-align: bottom;
   background: white;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-size: 84vh 6vh;
   background-position: -60vh 0;
-  width: 6vh;
-  height: 6vh;
-  border: 1px solid black;
+  background-size: 84vh 6vh;
+  border: 1px solid #666;
 `
 
 const Home: NextPage = () => {
@@ -196,7 +207,6 @@ const Home: NextPage = () => {
         // クリックした場所の周囲の座標をリストに格納
         const wipBlock = getBlockAround(x, y)
         for (const wip of wipBlock) {
-          console.log(wip.y, wip.x, newBoard[wip.y][wip.x])
           if (newBoard[wip.y][wip.x] === 12) {
             newFlagCount++
           }
