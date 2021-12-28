@@ -19,7 +19,7 @@ const Board = styled.div`
   width: 60vh;
   height: 80vh;
   background-color: #ccc;
-  border: 6px solid;
+  border: 0.8vh solid;
   border-color: #ddd #666 #666 #ddd;
 `
 const StateBoard = styled.div`
@@ -29,10 +29,11 @@ const StateBoard = styled.div`
   justify-content: space-around;
   width: 54vh;
   height: 12vh;
-  border: 5px solid;
+  border: 0.7vh solid;
   border-color: #666 #ddd #ddd #666;
 `
-const Flagcouner = styled.div`
+
+const CounterTemplate = styled.div`
   display: inline;
   width: 16vh;
   height: 10vh;
@@ -41,32 +42,22 @@ const Flagcouner = styled.div`
   color: red;
   text-align: center;
   background-color: black;
-  border: 3px solid black;
+  border: 0.5vh solid black;
   border-color: #666 #ddd #ddd #666;
 `
+const Flagcouner = styled(CounterTemplate)``
 
-const CountUpTimer = styled.div`
-  display: inline;
-  width: 16vh;
-  height: 10vh;
-  font-size: 9vh;
-  line-height: 8.5vh;
-  color: red;
-  text-align: center;
-  background-color: black;
-  border: 3px solid black;
-  border-color: #666 #ddd #ddd #666;
-`
+const CountUpTimer = styled(CounterTemplate)``
 
-const Face = styled.div<{ faceState: number }>`
+const Face = styled.div<{ faceState: string }>`
   width: 10vh;
   height: 10vh;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-position: ${(props) => (-10 * props.faceState).toString() + 'vh'} 0;
+  background-position: ${(props) => props.faceState} 0;
   background-origin: border-box;
   background-size: 140vh 10vh;
-  border: 5px solid;
+  border: 0.6vh solid;
   border-color: #ddd #666 #666 #ddd;
 `
 
@@ -77,40 +68,43 @@ const GameBoard = styled.div`
   border-color: #666 #ddd #ddd #666;
 `
 
-const GameBlock = styled.div<{ isOpen: boolean; num: number }>`
+const BlockTemplate = styled.div`
   display: inline-block;
   width: 6vh;
   height: 6vh;
   vertical-align: bottom;
-  background: ${(props) => (props.isOpen ? 'white' : 'gray')};
+`
+
+const GameBlock = styled(BlockTemplate)<{ isOpen: boolean; imagePosition: string }>`
+  background-color: ${(props) => (props.isOpen ? 'white' : 'gray')};
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-position: ${(props) =>
-      1 <= props.num && props.num <= 8
-        ? (-6 * (props.num - 1)).toString() + 'vh'
-        : 11 <= props.num
-        ? (-6 * (props.num - 3)).toString() + 'vh'
-        : '100vh'}
-    0;
+  background-position: ${(props) => props.imagePosition};
   background-size: 84vh 6vh;
   ${(props) =>
     props.isOpen
-      ? 'border: 1px solid #666;'
-      : 'border: 5px solid;' + 'border-color: #bbb #666 #666 #bbb;'}
+      ? 'border: 0.1vh solid #666;'
+      : 'border: 0.4vh solid;' + 'border-color: #bbb #666 #666 #bbb;'}
 `
 
-const BombBlock = styled.div`
-  display: inline-block;
-  width: 6vh;
-  height: 6vh;
-  font-size: 6vh;
-  vertical-align: bottom;
-  background: white;
+const BombBlock = styled(BlockTemplate)`
+  background-color: white;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
   background-position: -60vh 0;
   background-size: 84vh 6vh;
-  border: 1px solid #666;
+  border: 0.1vh solid #666;
+`
+
+const FlagBlock = styled(BlockTemplate)<{ imagePosition: string }>`
+  background: gray;
+  background-image: url(${IMAGE});
+  background-repeat: no-repeat;
+  background-position: ${(props) => props.imagePosition} -0.3vh;
+  background-origin: padding-box;
+  background-size: 84vh 6vh;
+  border: 0.3vh solid;
+  border-color: #bbb #666 #666 #bbb;
 `
 
 const Home: NextPage = () => {
@@ -289,7 +283,9 @@ const Home: NextPage = () => {
         <StateBoard>
           <Flagcouner>{flagCount.toString().padStart(3, '0')}</Flagcouner>
           <Face
-            faceState={state.isGameover ? 13 : state.isGameclear ? 12 : 11}
+            faceState={
+              ((state.isGameover ? 13 : state.isGameclear ? 12 : 11) * -10).toString() + 'vh'
+            }
             onClick={() => reset()}
             onContextMenu={(e) => cheat(e)}
           ></Face>
@@ -301,11 +297,20 @@ const Home: NextPage = () => {
             row.map((num, x) =>
               num === 10 ? (
                 <BombBlock key={`${x}-${y}`}></BombBlock>
+              ) : 11 <= num ? (
+                <FlagBlock
+                  key={`${x}-${y}`}
+                  imagePosition={(-6 * (num - 3) - 0.1).toString() + 'vh'}
+                  onContextMenu={(e) => rightClick(x, y, e)}
+                ></FlagBlock>
               ) : (
                 <GameBlock
                   key={`${x}-${y}`}
                   isOpen={num < 9}
-                  num={num}
+                  imagePosition={
+                    1 <= num && num <= 8 ? (-6 * (num - 1) - 0.1).toString() + 'vh' : '100vh'
+                    //100vhは適当な値
+                  }
                   onClick={() => onClick(x, y)}
                   onContextMenu={(e) => rightClick(x, y, e)}
                 ></GameBlock>
