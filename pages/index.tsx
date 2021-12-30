@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const IMAGE = 'images/img.png'
@@ -123,29 +123,43 @@ const Home: NextPage = () => {
     [9, 9, 9, 9, 9, 9, 9, 9, 9]
   ]
   const startBombs: { x: number; y: number }[] = []
-
+  const startState = { isGameclear: false, isGameover: false }
   const [board, setBoard] = useState(startBoard)
   const [bombs, setBombs] = useState(startBombs)
-  const [gameState, setGameState] = useState({ isGameclear: false, isGameover: false })
+  const [gameState, setGameState] = useState(startState)
   const [flagCount, setFlagCount] = useState(gameField.numberOfBombs)
+  const [timer, setTimer] = useState(0)
+
+  useEffect(() => {
+    //爆弾が生成されている(ゲームが始まっている)かつゲームが終わっていないときにTimer稼働
+    if (bombs.length !== 0 && !gameState.isGameclear && !gameState.isGameover) {
+      const id = setInterval(() => {
+        setTimer((t) => t + 1)
+      }, 1000)
+      return () => {
+        clearInterval(id)
+      }
+    }
+  }, [bombs, gameState])
 
   const onClick = (x: number, y: number) => {
-    //爆弾の生成
+    //爆弾の生成関数
     const createBomb = (x: number, y: number) => {
       const tmpBombs: { x: number; y: number }[] = []
       while (tmpBombs.length < gameField.numberOfBombs) {
-        const randomX = Math.floor(Math.random() * gameField.firldSize) //0～9までの整数を出力
+        const randomX = Math.floor(Math.random() * gameField.firldSize)
         const randomY = Math.floor(Math.random() * gameField.firldSize)
         if (
-          !tmpBombs.some((b) => (b.x === randomX && b.y === randomY) || (b.x === x && b.y === y))
+          !tmpBombs.some((b) => b.x === randomX && b.y === randomY) &&
+          x !== randomX &&
+          y !== randomY
         ) {
           tmpBombs.push({ x: randomX, y: randomY })
         }
       }
-      setBombs(tmpBombs)
       return tmpBombs
     }
-    // 引数座標の周りのブロックの座標を返す
+    // 引数座標の周りのブロックの座標を返す関数
     const getBlockAround = (x: number, y: number) => {
       const result = []
       for (let xi = x - 1; xi < x + 2; xi++) {
@@ -163,7 +177,7 @@ const Home: NextPage = () => {
       }
       return result
     }
-    //引数座標周りの爆弾の数を返す
+    //引数座標周りの爆弾の数を返す関数
     const countBombsAround = (x: number, y: number, newBombs: { x: number; y: number }[]) => {
       let countBombs = 0
       for (let xi = x - 1; xi < x + 2; xi++) {
@@ -175,15 +189,17 @@ const Home: NextPage = () => {
       }
       return countBombs
     }
-
     const newBoard: number[][] = JSON.parse(JSON.stringify(board))
-    if (gameState.isGameclear || gameState.isGameover || 10 < newBoard[y][x]) {
+    if (gameState.isGameclear || gameState.isGameover || newBoard[y][x] !== 9) {
       return
     }
-    const newBombs: { x: number; y: number }[] = bombs.length === 0 ? createBomb(x, y) : bombs
+    let newBombs: { x: number; y: number }[] = bombs
+    if (newBombs.length === 0) {
+      newBombs = createBomb(x, y)
+      setBombs(newBombs)
+    }
     let newNum = 0
     let existsBomb = false
-
     // クリックした座標に爆弾があるか判定
     for (let i = 0; i < newBombs.length; i++) {
       if (newBombs[i].x === x && newBombs[i].y === y) {
@@ -199,7 +215,6 @@ const Home: NextPage = () => {
     } else {
       newNum = countBombsAround(x, y, newBombs)
       newBoard[y][x] = newNum
-
       if (newNum === 0) {
         let followNewNum = 0
         let newFlagCount = flagCount
@@ -223,14 +238,13 @@ const Home: NextPage = () => {
         }
         setFlagCount(newFlagCount)
       }
-
       //残り未公開ブロックの数をカウント
       let notOpenBlockCount = 0
       for (const row of newBoard) {
         notOpenBlockCount += row.filter((num) => num === 9 || 11 <= num).length
       }
       //勝利判定
-      if (notOpenBlockCount === newBombs.length) {
+      if (notOpenBlockCount === gameField.numberOfBombs) {
         setGameState({ ...gameState, isGameclear: true })
         for (const bom of newBombs) {
           newBoard[bom.y][bom.x] = 12
@@ -242,6 +256,7 @@ const Home: NextPage = () => {
 
   const rightClick = (x: number, y: number, e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
+
     if (gameState.isGameclear || gameState.isGameover) {
       return
     }
@@ -266,8 +281,9 @@ const Home: NextPage = () => {
   const reset = () => {
     setBoard(startBoard)
     setBombs(startBombs)
-    setGameState({ isGameclear: false, isGameover: false })
+    setGameState(startState)
     setFlagCount(gameField.numberOfBombs)
+    setTimer(0)
   }
 
   const cheat = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -281,12 +297,24 @@ const Home: NextPage = () => {
       }
     }
     setBoard(newBoard)
+    //残り未公開ブロックの数をカウント
+    let notOpenBlockCount = 0
+    for (const row of newBoard) {
+      notOpenBlockCount += row.filter((num) => num === 9 || 11 <= num).length
+    }
+    //勝利判定
+    if (notOpenBlockCount === gameField.numberOfBombs) {
+      setGameState({ ...gameState, isGameclear: true })
+      for (const bom of bombs) {
+        newBoard[bom.y][bom.x] = 12
+      }
+    }
   }
   return (
     <Container>
       <Board>
         <StateBoard>
-          <Flagcouner>{flagCount.toString().padStart(3, '0')}</Flagcouner>
+          <Flagcouner>{('000' + flagCount).slice(-3)}</Flagcouner>
           <Face
             faceState={
               ((gameState.isGameover ? 13 : gameState.isGameclear ? 12 : 11) * -10).toString() +
@@ -295,7 +323,7 @@ const Home: NextPage = () => {
             onClick={() => reset()}
             onContextMenu={(e) => cheat(e)}
           ></Face>
-          <CountUpTimer>000</CountUpTimer>
+          <CountUpTimer>{timer > 999 ? 999 : ('000' + timer).slice(-3)}</CountUpTimer>
         </StateBoard>
 
         <GameBoard>
