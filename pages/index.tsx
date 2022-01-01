@@ -303,31 +303,6 @@ const Home: NextPage = () => {
     setTimer(0)
   }
 
-  const cheat = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    const newBoard: number[][] = JSON.parse(JSON.stringify(board))
-    for (let x = 0; x < gameConfig.widthBlocks; x++) {
-      for (let y = 0; y < gameConfig.heightBlocks; y++) {
-        if (!bombs.some((b) => b.x === x && b.y === y)) {
-          newBoard[y][x] = 0
-        }
-      }
-    }
-    setBoard(newBoard)
-    //残り未公開ブロックの数をカウント
-    let notOpenBlockCount = 0
-    for (const row of newBoard) {
-      notOpenBlockCount += row.filter((num) => num === 9 || 11 <= num).length
-    }
-    //勝利判定
-    if (notOpenBlockCount === gameConfig.numberOfBombs) {
-      setGameState({ ...gameState, isGameclear: true })
-      for (const bom of bombs) {
-        newBoard[bom.y][bom.x] = 12
-      }
-    }
-  }
-
   const changeLevel = (levelNumber: number) => {
     const newLevel = difficultyLevel[levelNumber]
     setGameConfig(newLevel)
@@ -351,7 +326,6 @@ const Home: NextPage = () => {
           <Face
             faceState={gameState.isGameover ? 13 : gameState.isGameclear ? 12 : 11}
             onClick={() => reset()}
-            onContextMenu={(e) => cheat(e)}
           ></Face>
           <CountUpTimer>{timer > 999 ? 999 : ('000' + timer).slice(-3)}</CountUpTimer>
         </StateBoard>
