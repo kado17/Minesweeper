@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 const IMAGE = 'images/img.png'
 //Blocksize >> 5vh
-
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -33,7 +32,6 @@ const StateBoard = styled.div<{ widthNumberOfBlocks: number }>`
   border: 0.7vh solid;
   border-color: #666 #ddd #ddd #666;
 `
-
 const Flagcouner = styled.div`
   display: inline;
   width: 13vh;
@@ -47,11 +45,9 @@ const Flagcouner = styled.div`
   border: 0.5vh solid black;
   border-color: #666 #ddd #ddd #666;
 `
-
 const CountUpTimer = styled(Flagcouner)`
   margin-right: 1vh;
 `
-
 const Face = styled.div<{ faceState: number }>`
   width: 8vh;
   height: 8vh;
@@ -63,14 +59,12 @@ const Face = styled.div<{ faceState: number }>`
   border: 0.6vh solid;
   border-color: #ddd #666 #666 #ddd;
 `
-
 const GameBoard = styled.div<{ numberOfBlocks: { width: number; height: number } }>`
   width: ${(props) => props.numberOfBlocks.width * 5 + 2}vh;
   height: ${(props) => props.numberOfBlocks.height * 5 + 2}vh;
   border: 1vh solid;
   border-color: #666 #ddd #ddd #666;
 `
-
 const BombBlock = styled.div`
   display: inline-block;
   width: 5vh;
@@ -83,7 +77,6 @@ const BombBlock = styled.div`
   background-size: 70vh 5vh;
   border: 0.1vh solid #666;
 `
-
 const GameBlock = styled(BombBlock)<{ isOpen: boolean; num: number }>`
   background-color: ${(props) => (props.isOpen ? 'white' : 'gray')};
   background-position: ${(props) => -5 * (props.num - 1) - 0.1}vh 0;
@@ -98,22 +91,59 @@ const FlagBlock = styled(BombBlock)<{ num: number }>`
   border: 0.3vh solid;
   border-color: #bbb #666 #666 #bbb;
 `
+const SideMenu = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 18vh;
+  height: 20vh;
+  background-color: #ccc;
+  border: 0.8vh solid;
+  border-color: #ddd #666 #666 #ddd;
+`
+const EasyLevelButton = styled.div`
+  width: 16vh;
+  height: 5.5vh;
+  font-size: 4vh;
+  line-height: 4vh;
+  color: #111;
+  text-align: center;
+  background-color: gray;
+  border: 0.4vh solid;
+  border-color: #bbb #666 #666 #bbb;
+`
+const NormalLevelButton = styled(EasyLevelButton)``
+const HardLevelButton = styled(EasyLevelButton)``
 
 const Home: NextPage = () => {
-  //フィールドの大きさと爆弾の数の定義
-
   const startBombs: { x: number; y: number }[] = []
   const startState = { isGameclear: false, isGameover: false }
-  const [gameConfig, setGameConfig] = useState({
-    widthBlocks: 30,
-    heightBlocks: 16,
-    numberOfBombs: 10,
-  })
-  const startBoard = Array.from(new Array(gameConfig.heightBlocks), () =>
-    new Array(gameConfig.widthBlocks).fill(9)
-  )
-  console.log(startBoard)
-  const [board, setBoard] = useState(startBoard)
+  //フィールドの大きさと爆弾の数の定義
+  const difficultyLevel = [
+    {
+      widthBlocks: 9,
+      heightBlocks: 9,
+      numberOfBombs: 10,
+    },
+    {
+      widthBlocks: 16,
+      heightBlocks: 16,
+      numberOfBombs: 40,
+    },
+    {
+      widthBlocks: 30,
+      heightBlocks: 16,
+      numberOfBombs: 99,
+    },
+  ]
+  const createBoard = (width: number, height: number): number[][] =>
+    Array.from(new Array(height), () => new Array(width).fill(9))
+  const [gameConfig, setGameConfig] = useState(difficultyLevel[2])
+  const [board, setBoard] = useState(createBoard(gameConfig.widthBlocks, gameConfig.heightBlocks))
   const [bombs, setBombs] = useState(startBombs)
   const [gameState, setGameState] = useState(startState)
   const [flagCount, setFlagCount] = useState(gameConfig.numberOfBombs)
@@ -215,7 +245,6 @@ const Home: NextPage = () => {
           }
           followNewNum = countBombsAround(wip.x, wip.y, newBombs)
           newBoard[wip.y][wip.x] = followNewNum
-
           //処理したブロックの値が0かつwipBlockに未格納なら、その周囲の座標をリストに格納
           if (followNewNum === 0) {
             for (const block of getBlockAround(wip.x, wip.y)) {
@@ -245,7 +274,6 @@ const Home: NextPage = () => {
 
   const rightClick = (x: number, y: number, e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
-
     if (gameState.isGameclear || gameState.isGameover) {
       return
     }
@@ -268,7 +296,7 @@ const Home: NextPage = () => {
   }
 
   const reset = () => {
-    setBoard(startBoard)
+    setBoard(createBoard(gameConfig.widthBlocks, gameConfig.heightBlocks))
     setBombs(startBombs)
     setGameState(startState)
     setFlagCount(gameConfig.numberOfBombs)
@@ -299,8 +327,24 @@ const Home: NextPage = () => {
       }
     }
   }
+
+  const changeLevel = (levelNumber: number) => {
+    const newLevel = difficultyLevel[levelNumber]
+    setGameConfig(newLevel)
+    setBoard(createBoard(newLevel.widthBlocks, newLevel.heightBlocks))
+    setBombs(startBombs)
+    setGameState(startState)
+    setFlagCount(newLevel.numberOfBombs)
+    setTimer(0)
+  }
+
   return (
     <Container>
+      <SideMenu>
+        <EasyLevelButton onClick={() => changeLevel(0)}>Easy</EasyLevelButton>
+        <NormalLevelButton onClick={() => changeLevel(1)}>Normal</NormalLevelButton>
+        <HardLevelButton onClick={() => changeLevel(2)}>Hard</HardLevelButton>
+      </SideMenu>
       <Board numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}>
         <StateBoard widthNumberOfBlocks={gameConfig.widthBlocks}>
           <Flagcouner>{('000' + flagCount).slice(-3)}</Flagcouner>
@@ -311,7 +355,6 @@ const Home: NextPage = () => {
           ></Face>
           <CountUpTimer>{timer > 999 ? 999 : ('000' + timer).slice(-3)}</CountUpTimer>
         </StateBoard>
-
         <GameBoard
           numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}
         >
