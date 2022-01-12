@@ -142,7 +142,7 @@ const Home: NextPage = () => {
   ]
   const createBoard = (width: number, height: number): number[][] =>
     Array.from(new Array(height), () => new Array(width).fill(9))
-  const [gameConfig, setGameConfig] = useState(difficultyLevel[2])
+  const [gameConfig, setGameConfig] = useState(difficultyLevel[0])
   const [board, setBoard] = useState(createBoard(gameConfig.widthBlocks, gameConfig.heightBlocks))
   const [bombs, setBombs] = useState(startBombs)
   const [gameState, setGameState] = useState(startState)
