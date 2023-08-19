@@ -188,7 +188,7 @@ const Home: NextPage = () => {
             xi < gameConfig.widthBlocks &&
             0 <= yi &&
             yi < gameConfig.heightBlocks &&
-            { x: x, y: y } !== { x: xi, y: yi }
+            JSON.stringify({ x: x, y: y }) !== JSON.stringify({ x: xi, y: yi })
           ) {
             result.push({ x: xi, y: yi })
           }
