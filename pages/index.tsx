@@ -3,42 +3,41 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const IMAGE = 'images/img.png'
-//Blocksize >> 5vh
 const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #008080;
+  background-image: url('images/background.png');
 `
 const Board = styled.div<{ numberOfBlocks: { width: number; height: number } }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  width: ${(props) => props.numberOfBlocks.width * 5 + 5}vh;
-  height: ${(props) => props.numberOfBlocks.height * 5 + 19}vh;
+  width: ${(props) => props.numberOfBlocks.width * 40 + 50}px;
+  height: ${(props) => props.numberOfBlocks.height * 40 + 150}px;
   background-color: #ccc;
-  border: 0.8vh solid;
+  border: 2px solid;
   border-color: #ddd #666 #666 #ddd;
 `
-const StateBoard = styled.div<{ widthNumberOfBlocks: number }>`
+const StateBoard = styled.div<{ numberOfBlocksWidth: number }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: ${(props) => props.widthNumberOfBlocks * 5 + 2}vh;
-  height: 11vh;
-  border: 0.7vh solid;
+  width: ${(props) => props.numberOfBlocksWidth * 40 + 2}px;
+  height: 86px;
+  border: 4px solid;
   border-color: #666 #ddd #ddd #666;
 `
 const Flagcouner = styled.div`
   display: inline;
-  width: 13vh;
-  height: 8vh;
-  margin-left: 1vh;
-  font-size: 7vh;
-  line-height: 6.5vh;
+  width: 120px;
+  height: 68px;
+  margin-left: 10px;
+  font-size: 60px;
+  line-height: 55px;
   color: red;
   text-align: center;
   background-color: black;
@@ -46,17 +45,18 @@ const Flagcouner = styled.div`
   border-color: #666 #ddd #ddd #666;
 `
 const CountUpTimer = styled(Flagcouner)`
-  margin-right: 1vh;
+  margin-right: 10px;
+  margin-left: 0;
 `
 const Face = styled.div<{ faceState: number }>`
-  width: 8vh;
-  height: 8vh;
+  width: 70px;
+  height: 70px;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-position: ${(props) => props.faceState * -8}vh 0;
+  background-position: ${(props) => props.faceState * -58.6}px;
   background-origin: border-box;
-  background-size: 112vh 8vh;
-  border: 0.6vh solid;
+  background-size: 826px;
+  border: 3px solid;
   border-color: #ddd #666 #666 #ddd;
 `
 const GameBoard = styled.div<{ numberOfBlocks: { width: number; height: number } }>`
@@ -79,7 +79,7 @@ const BombBlock = styled.div`
 `
 const GameBlock = styled(BombBlock)<{ isOpen: boolean; num: number }>`
   background-color: ${(props) => (props.isOpen ? '#bbb' : 'gray')};
-  background-position: ${(props) => -36 * (props.num - 1)}px 0;
+  background-position: ${(props) => -36 * (props.num - 1)}px;
   background-size: 505px;
   ${(props) =>
     props.isOpen
@@ -319,7 +319,7 @@ const Home: NextPage = () => {
         <HardLevelButton onClick={() => changeLevel(2)}>Hard</HardLevelButton>
       </SideMenu>
       <Board numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}>
-        <StateBoard widthNumberOfBlocks={gameConfig.widthBlocks}>
+        <StateBoard numberOfBlocksWidth={gameConfig.widthBlocks}>
           <Flagcouner>{('000' + flagCount).slice(-3)}</Flagcouner>
           <Face
             faceState={gameState.isGameover ? 13 : gameState.isGameclear ? 12 : 11}
