@@ -60,35 +60,37 @@ const Face = styled.div<{ faceState: number }>`
   border-color: #ddd #666 #666 #ddd;
 `
 const GameBoard = styled.div<{ numberOfBlocks: { width: number; height: number } }>`
-  width: ${(props) => props.numberOfBlocks.width * 5 + 2}vh;
-  height: ${(props) => props.numberOfBlocks.height * 5 + 2}vh;
-  border: 1vh solid;
+  width: ${(props) => props.numberOfBlocks.width * 40 + 2}px;
+  height: ${(props) => props.numberOfBlocks.height * 40 + 2}px;
+  border: 1px solid;
   border-color: #666 #ddd #ddd #666;
 `
 const BombBlock = styled.div`
   display: inline-block;
-  width: 5vh;
-  height: 5vh;
+  width: 40px;
+  height: 40px;
   vertical-align: bottom;
-  background-color: white;
+  background-color: red;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
-  background-position: -50vh 0;
-  background-size: 70vh 5vh;
-  border: 0.1vh solid #666;
+  background-position: -367px;
+  background-size: 516px;
+  border: 1px solid #666;
 `
 const GameBlock = styled(BombBlock)<{ isOpen: boolean; num: number }>`
-  background-color: ${(props) => (props.isOpen ? 'white' : 'gray')};
-  background-position: ${(props) => -5 * (props.num - 1) - 0.1}vh 0;
+  background-color: ${(props) => (props.isOpen ? '#bbb' : 'gray')};
+  background-position: ${(props) => -36 * (props.num - 1)}px 0;
+  background-size: 505px;
   ${(props) =>
     props.isOpen
-      ? 'border: 0.1vh solid #666;'
-      : 'border: 0.4vh solid;' + 'border-color: #bbb #666 #666 #bbb;'}
+      ? 'border: 0.2px solid #666;'
+      : 'border: 0.4px solid;' + 'border-color: #bbb #666 #666 #bbb;'}
 `
 const FlagBlock = styled(BombBlock)<{ num: number }>`
   background-color: gray;
-  background-position: ${(props) => -5 * (props.num - 3) - 0.1}vh -0.3vh;
-  border: 0.3vh solid;
+  background-size: 507px;
+  background-position: ${(props) => -36 * (props.num - 3)}px 0;
+  border: 0.1vh solid;
   border-color: #bbb #666 #666 #bbb;
 `
 const SideMenu = styled.div`
@@ -283,15 +285,11 @@ const Home: NextPage = () => {
       if (0 < flagCount) {
         newBoard[y][x] = 12
         setFlagCount(flagCount - 1)
-      } else {
-        newBoard[y][x] = 11
-      }
+      } else newBoard[y][x] = 11
     } else if (newBoard[y][x] === 12) {
       newBoard[y][x] = 11
       setFlagCount(flagCount + 1)
-    } else if (newBoard[y][x] === 11) {
-      newBoard[y][x] = 9
-    }
+    } else if (newBoard[y][x] === 11) newBoard[y][x] = 9
     setBoard(newBoard)
   }
 
