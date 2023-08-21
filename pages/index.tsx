@@ -117,16 +117,16 @@ const SideMenu = styled.div`
 const LevelButton = styled.div<{ isSelect: boolean }>`
   position: relative;
   display: inline-block;
+  width: 90%;
+  height: 25%;
   padding: 10px;
+  font-family: bold;
+  color: #fff;
   text-decoration: none;
   background-color: #f2545b;
   border-radius: 2px;
-  width: 90%;
-  height: 25%;
-  color: #fff;
-  transition: none;
-  font-family: bold;
   box-shadow: 0 6px 0 #a4243b;
+  transition: none;
 
   ${(props) =>
     props.isSelect
