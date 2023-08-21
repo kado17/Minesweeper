@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -58,6 +59,10 @@ const Face = styled.div<{ faceState: number }>`
   background-size: 826px;
   border: 3px solid;
   border-color: #ddd #666 #666 #ddd;
+  &:hover {
+    opacity: 0.8;
+    transition: 0.1s;
+  }
 `
 const GameBoard = styled.div<{ numberOfBlocks: { width: number; height: number } }>`
   width: ${(props) => props.numberOfBlocks.width * 40 + 2}px;
@@ -65,12 +70,12 @@ const GameBoard = styled.div<{ numberOfBlocks: { width: number; height: number }
   border: 1px solid;
   border-color: #666 #ddd #ddd #666;
 `
-const BombBlock = styled.div`
+const BombBlock = styled.div<{ num: number }>`
   display: inline-block;
   width: 40px;
   height: 40px;
   vertical-align: bottom;
-  background-color: red;
+  background-color: ${(props) => (props.num === 99 ? 'red' : '#bbb')};
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
   background-position: -367px;
@@ -95,37 +100,54 @@ const FlagBlock = styled(BombBlock)<{ num: number }>`
 `
 const SideMenu = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
+  bottom: 15px;
+  left: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  width: 18vh;
-  height: 20vh;
-  background-color: #ccc;
-  border: 0.8vh solid;
-  border-color: #ddd #666 #666 #ddd;
-`
-const EasyLevelButton = styled.div`
-  width: 16vh;
-  height: 5.5vh;
-  font-size: 4vh;
-  line-height: 4vh;
-  color: #111;
+  width: 170px;
+  height: 220px;
   text-align: center;
-  background-color: gray;
-  border: 0.4vh solid;
-  border-color: #bbb #666 #666 #bbb;
+  background-color: #ccc;
+  border: 5px solid #666;
+  padding: 10px;
 `
-const NormalLevelButton = styled(EasyLevelButton)``
-const HardLevelButton = styled(EasyLevelButton)``
+const LevelButton = styled.div<{ isSelect: boolean }>`
+  display: inline-block;
+  position: relative;
+  padding: 10px;
+  text-decoration: none;
+  background-color: #f2545b;
+  border-radius: 2px;
+  width: 90%;
+  height: 25%;
+  color: #fff;
+  -webkit-transition: none;
+  transition: none;
+  font-family: bold;
+  box-shadow: 0 6px 0 #a4243b;
+
+  ${(props) =>
+    props.isSelect
+      ? `background-color: #33ccff; 
+    top: 6px;
+    box-shadow: none;
+    color: #fff;`
+      : ''}
+
+  &:hover {
+    top: 6px;
+    box-shadow: none;
+    color: #fff;
+  }
+`
 
 const Home: NextPage = () => {
   const startBombs: { x: number; y: number }[] = []
   const startState = { isGameclear: false, isGameover: false }
   //フィールドの大きさと爆弾の数の定義
-  const difficultyLevel = [
+  const GameLevelParameter = [
     {
       widthBlocks: 9,
       heightBlocks: 9,
@@ -144,7 +166,8 @@ const Home: NextPage = () => {
   ]
   const createBoard = (width: number, height: number): number[][] =>
     Array.from(new Array(height), () => new Array(width).fill(9))
-  const [gameConfig, setGameConfig] = useState(difficultyLevel[0])
+  const [gameLevel, setGameLevel] = useState(0)
+  const [gameConfig, setGameConfig] = useState(GameLevelParameter[gameLevel])
   const [board, setBoard] = useState(createBoard(gameConfig.widthBlocks, gameConfig.heightBlocks))
   const [bombs, setBombs] = useState(startBombs)
   const [gameState, setGameState] = useState(startState)
@@ -233,6 +256,7 @@ const Home: NextPage = () => {
       for (const bom of newBombs) {
         newBoard[bom.y][bom.x] = 10
       }
+      newBoard[y][x] = 99
     } else {
       newNum = countBombsAround(x, y, newBombs)
       newBoard[y][x] = newNum
@@ -293,67 +317,73 @@ const Home: NextPage = () => {
     setBoard(newBoard)
   }
 
-  const reset = () => {
-    setBoard(createBoard(gameConfig.widthBlocks, gameConfig.heightBlocks))
+  const reset = (nextGameLevel: number) => {
+    let nextGameConfig = gameConfig
+    if (nextGameLevel !== gameLevel) {
+      setGameLevel(nextGameLevel)
+      setGameConfig(GameLevelParameter[nextGameLevel])
+      nextGameConfig = GameLevelParameter[nextGameLevel]
+    }
+    setBoard(createBoard(nextGameConfig.widthBlocks, nextGameConfig.heightBlocks))
     setBombs(startBombs)
     setGameState(startState)
-    setFlagCount(gameConfig.numberOfBombs)
+    setFlagCount(nextGameConfig.numberOfBombs)
     setTimer(0)
   }
-
-  const changeLevel = (levelNumber: number) => {
-    const newLevel = difficultyLevel[levelNumber]
-    setGameConfig(newLevel)
-    setBoard(createBoard(newLevel.widthBlocks, newLevel.heightBlocks))
-    setBombs(startBombs)
-    setGameState(startState)
-    setFlagCount(newLevel.numberOfBombs)
-    setTimer(0)
-  }
-
   return (
-    <Container>
-      <SideMenu>
-        <EasyLevelButton onClick={() => changeLevel(0)}>Easy</EasyLevelButton>
-        <NormalLevelButton onClick={() => changeLevel(1)}>Normal</NormalLevelButton>
-        <HardLevelButton onClick={() => changeLevel(2)}>Hard</HardLevelButton>
-      </SideMenu>
-      <Board numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}>
-        <StateBoard numberOfBlocksWidth={gameConfig.widthBlocks}>
-          <Flagcouner>{('000' + flagCount).slice(-3)}</Flagcouner>
-          <Face
-            faceState={gameState.isGameover ? 13 : gameState.isGameclear ? 12 : 11}
-            onClick={() => reset()}
-          ></Face>
-          <CountUpTimer>{timer > 999 ? 999 : ('000' + timer).slice(-3)}</CountUpTimer>
-        </StateBoard>
-        <GameBoard
-          numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}
-        >
-          {board.map((row, y) =>
-            row.map((num, x) =>
-              num === 10 ? (
-                <BombBlock key={`${x}-${y}`}></BombBlock>
-              ) : 11 <= num ? (
-                <FlagBlock
-                  key={`${x}-${y}`}
-                  num={num}
-                  onContextMenu={(e) => rightClick(x, y, e)}
-                ></FlagBlock>
-              ) : (
-                <GameBlock
-                  key={`${x}-${y}`}
-                  isOpen={num < 9}
-                  num={1 <= num && num <= 8 ? num : 100} //100は適当な値
-                  onClick={() => onClick(x, y)}
-                  onContextMenu={(e) => rightClick(x, y, e)}
-                ></GameBlock>
+    <>
+      <Head>
+        <title>Minesweeper</title>
+      </Head>
+      <Container>
+        <SideMenu>
+          <LevelButton onClick={() => reset(0)} isSelect={gameLevel === 0}>
+            Beginner
+          </LevelButton>
+          <LevelButton onClick={() => reset(1)} isSelect={gameLevel === 1}>
+            Intermediate
+          </LevelButton>
+          <LevelButton onClick={() => reset(2)} isSelect={gameLevel === 2}>
+            Expert
+          </LevelButton>
+        </SideMenu>
+        <Board numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}>
+          <StateBoard numberOfBlocksWidth={gameConfig.widthBlocks}>
+            <Flagcouner>{('000' + flagCount).slice(-3)}</Flagcouner>
+            <Face
+              faceState={gameState.isGameover ? 13 : gameState.isGameclear ? 12 : 11}
+              onClick={() => reset(gameLevel)}
+            ></Face>
+            <CountUpTimer>{timer > 999 ? 999 : ('000' + timer).slice(-3)}</CountUpTimer>
+          </StateBoard>
+          <GameBoard
+            numberOfBlocks={{ width: gameConfig.widthBlocks, height: gameConfig.heightBlocks }}
+          >
+            {board.map((row, y) =>
+              row.map((num, x) =>
+                num === 10 || num === 99 ? (
+                  <BombBlock key={`${x}-${y}`} num={num}></BombBlock>
+                ) : 11 <= num ? (
+                  <FlagBlock
+                    key={`${x}-${y}`}
+                    num={num}
+                    onContextMenu={(e) => rightClick(x, y, e)}
+                  ></FlagBlock>
+                ) : (
+                  <GameBlock
+                    key={`${x}-${y}`}
+                    isOpen={num < 9}
+                    num={1 <= num && num <= 8 ? num : 100} //100は適当な値
+                    onClick={() => onClick(x, y)}
+                    onContextMenu={(e) => rightClick(x, y, e)}
+                  ></GameBlock>
+                )
               )
-            )
-          )}
-        </GameBoard>
-      </Board>
-    </Container>
+            )}
+          </GameBoard>
+        </Board>
+      </Container>
+    </>
   )
 }
 
