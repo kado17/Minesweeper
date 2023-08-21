@@ -9,5 +9,7 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.eol": "\n",
   "editor.tabSize": 2,
-  "stylelint.validate": ["css", "less", "postcss", "typescriptreact"]
+  "prettier.prettierPath": "node_modules/prettier",
+  "stylelint.validate": ["css", "less", "postcss"],
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }
