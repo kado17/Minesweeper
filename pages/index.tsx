@@ -59,6 +59,7 @@ const Face = styled.div<{ faceState: number }>`
   background-size: 826px;
   border: 3px solid;
   border-color: #ddd #666 #666 #ddd;
+
   &:hover {
     opacity: 0.8;
     transition: 0.1s;
@@ -93,8 +94,8 @@ const GameBlock = styled(BombBlock)<{ isOpen: boolean; num: number }>`
 `
 const FlagBlock = styled(BombBlock)<{ num: number }>`
   background-color: gray;
-  background-size: 507px;
   background-position: ${(props) => -36 * (props.num - 3)}px 0;
+  background-size: 507px;
   border: 0.1vh solid;
   border-color: #bbb #666 #666 #bbb;
 `
@@ -108,14 +109,14 @@ const SideMenu = styled.div`
   justify-content: space-evenly;
   width: 170px;
   height: 220px;
+  padding: 10px;
   text-align: center;
   background-color: #ccc;
   border: 5px solid #666;
-  padding: 10px;
 `
 const LevelButton = styled.div<{ isSelect: boolean }>`
-  display: inline-block;
   position: relative;
+  display: inline-block;
   padding: 10px;
   text-decoration: none;
   background-color: #f2545b;
@@ -123,7 +124,6 @@ const LevelButton = styled.div<{ isSelect: boolean }>`
   width: 90%;
   height: 25%;
   color: #fff;
-  -webkit-transition: none;
   transition: none;
   font-family: bold;
   box-shadow: 0 6px 0 #a4243b;
@@ -138,8 +138,8 @@ const LevelButton = styled.div<{ isSelect: boolean }>`
 
   &:hover {
     top: 6px;
-    box-shadow: none;
     color: #fff;
+    box-shadow: none;
   }
 `
 
