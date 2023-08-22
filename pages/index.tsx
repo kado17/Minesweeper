@@ -238,7 +238,7 @@ const Home: NextPage = () => {
   const [isOpenModal, setIsOpenModal] = useState(false)
 
   useEffect(() => {
-    //爆弾が生成されている(ゲームが始まっている)かつゲームが終わっていないときにTimer稼働
+    //爆弾が生成されている(ゲームが始まっている)かつゲームが終わっていないときにTimer動作
     if (bombs.length !== 0 && !gameState.isGameclear && !gameState.isGameover) {
       const id = setInterval(() => {
         setTimer((t) => t + 1)
