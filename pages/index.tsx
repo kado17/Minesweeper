@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import manual from '/images/manual.png'
 
 const Image = 'images/img.png'
 const Container = styled.div`
@@ -413,7 +414,7 @@ const Home: NextPage = () => {
         <Overlay isOpen={isOpenModal}>
           <Modal>
             <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
-            <Manual src="/images/manual.png"></Manual>
+            <Manual src={manual}></Manual>
           </Modal>
         </Overlay>
         <SideMenu>
