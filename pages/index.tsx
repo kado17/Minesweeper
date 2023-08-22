@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import Modal from 'react-modal'
+import ReactModal from 'react-modal'
 import styled from 'styled-components'
 
 const IMAGE = 'images/img.png'
@@ -401,14 +401,14 @@ const Home: NextPage = () => {
       </Head>
       <Container>
         <OpenModalButton onClick={() => setIsOpenModal(true)}>Manual</OpenModalButton>
-        <Modal
+        <ReactModal
           isOpen={isOpenModal}
           onRequestClose={() => setIsOpenModal(false)}
           style={customStyles}
         >
           <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
           <Manual src="/images/manual.png"></Manual>
-        </Modal>
+        </ReactModal>
         <SideMenu>
           <LevelButton onClick={() => reset(0)} isSelect={gameLevel === 0}>
             Beginner
