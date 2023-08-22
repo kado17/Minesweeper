@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import Modal from 'react-modal'
 import styled from 'styled-components'
 
 const Image = 'images/img.png'
@@ -164,10 +163,37 @@ const OpenModalButton = styled.div`
     transition: 0.1s;
   }
 `
+const Overlay = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0 0 0 / 70%);
+
+  ${(props) => (props.isOpen ? `display:block;` : '')}
+`
+
+const Modal = styled.div`
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  z-index: 2;
+  display: flex;
+  width: 80%;
+  height: 80%;
+  background-color: #fff;
+  border-radius: 10px;
+`
 const Manual = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
+  z-index: 3;
   border: 2px solid black;
   transform: translateY(-50%) translateX(-50%);
 `
@@ -185,24 +211,6 @@ const CloseButton = styled.div`
     transition: 0.1s;
   }
 `
-const customStyles: Modal.Styles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    backgroundColor: 'rgb(0 0 0 / 85%)',
-  },
-
-  content: {
-    position: 'absolute',
-    top: '10%',
-    right: '10%',
-    bottom: '10%',
-    left: '10%',
-    backgroundColor: '#fff',
-    borderRadius: '10px',
-  },
-}
 
 const Home: NextPage = () => {
   const startBombs: { x: number; y: number }[] = []
@@ -402,14 +410,12 @@ const Home: NextPage = () => {
       </Head>
       <Container>
         <OpenModalButton onClick={() => setIsOpenModal(true)}>Manual</OpenModalButton>
-        <Modal
-          isOpen={isOpenModal}
-          onRequestClose={() => setIsOpenModal(false)}
-          style={customStyles}
-        >
-          <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
-          <Manual src="/images/manual.png"></Manual>
-        </Modal>
+        <Overlay isOpen={isOpenModal}>
+          <Modal>
+            <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
+            <Manual src="/images/manual.png"></Manual>
+          </Modal>
+        </Overlay>
         <SideMenu>
           <LevelButton onClick={() => reset(0)} isSelect={gameLevel === 0}>
             Beginner
