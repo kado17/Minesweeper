@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import manual from '/images/manual.png'
 
 const Image = 'images/img.png'
 const Container = styled.div`
@@ -178,7 +177,6 @@ const Overlay = styled.div<{ isOpen: boolean }>`
 
   ${(props) => (props.isOpen ? `display:block;` : '')}
 `
-
 const Modal = styled.div`
   position: absolute;
   top: 10%;
@@ -414,7 +412,7 @@ const Home: NextPage = () => {
         <Overlay isOpen={isOpenModal}>
           <Modal>
             <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
-            <Manual src={manual}></Manual>
+            <Manual src="{`${process.env.PUBLIC_URL}/images/manual.png"></Manual>
           </Modal>
         </Overlay>
         <SideMenu>
