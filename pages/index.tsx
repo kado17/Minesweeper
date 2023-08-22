@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import styled from 'styled-components'
 
 const IMAGE = 'images/img.png'
@@ -142,6 +143,21 @@ const LevelButton = styled.div<{ isSelect: boolean }>`
     box-shadow: none;
   }
 `
+const OpenModalButton = styled.div`
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 15px 20px;
+  font-family: bold;
+  color: #fff;
+  background-color: black;
+  border-radius: 20%;
+
+  &:hover {
+    opacity: 0.8;
+    transition: 0.1s;
+  }
+`
 
 const Home: NextPage = () => {
   const startBombs: { x: number; y: number }[] = []
@@ -173,6 +189,7 @@ const Home: NextPage = () => {
   const [gameState, setGameState] = useState(startState)
   const [flagCount, setFlagCount] = useState(gameConfig.numberOfBombs)
   const [timer, setTimer] = useState(0)
+  const [isOpenModal, setIsOpenModal] = useState(false)
 
   useEffect(() => {
     //爆弾が生成されている(ゲームが始まっている)かつゲームが終わっていないときにTimer稼働
@@ -330,12 +347,18 @@ const Home: NextPage = () => {
     setFlagCount(nextGameConfig.numberOfBombs)
     setTimer(0)
   }
+
   return (
     <>
       <Head>
         <title>Minesweeper</title>
       </Head>
       <Container>
+        <OpenModalButton onClick={() => setIsOpenModal(true)}>Manual</OpenModalButton>
+        <Modal isOpen={isOpenModal} onRequestClose={() => setIsOpenModal(false)}>
+          <button onClick={() => setIsOpenModal(false)}>close</button>
+          <h1>Hello World</h1>
+        </Modal>
         <SideMenu>
           <LevelButton onClick={() => reset(0)} isSelect={gameLevel === 0}>
             Beginner
