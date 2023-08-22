@@ -361,6 +361,7 @@ const Home: NextPage = () => {
     setBoard(newBoard)
   }
 
+  //マスの右クリック動作
   const rightClick = (x: number, y: number, e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
     if (gameState.isGameclear || gameState.isGameover) {
