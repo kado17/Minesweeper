@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import ReactModal from 'react-modal'
 import styled from 'styled-components'
 
-const IMAGE = 'images/img.png'
+const Image = 'images/img.png'
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -55,7 +55,7 @@ const Face = styled.div<{ faceState: number }>`
   width: 70px;
   height: 70px;
   cursor: pointer;
-  background-image: url(${IMAGE});
+  background-image: url(${Image});
   background-repeat: no-repeat;
   background-position: ${(props) => props.faceState * -58.6}px;
   background-origin: border-box;
@@ -80,7 +80,7 @@ const BombBlock = styled.div<{ num: number }>`
   height: 40px;
   vertical-align: bottom;
   background-color: ${(props) => (props.num === 99 ? 'red' : '#bbb')};
-  background-image: url(${IMAGE});
+  background-image: url(${Image});
   background-repeat: no-repeat;
   background-position: -367px;
   background-size: 516px;
