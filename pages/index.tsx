@@ -186,14 +186,13 @@ const CloseButton = styled.div`
   }
 `
 const customStyles: ReactModal.Styles = {
-  /* stylelint-disable */
   overlay: {
     position: 'fixed',
     top: 0,
     left: 0,
     backgroundColor: 'rgb(0 0 0 / 85%)',
   },
-  /* stylelint-enable */
+
   content: {
     position: 'absolute',
     top: '10%',
