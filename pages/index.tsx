@@ -42,6 +42,7 @@ const Flagcouner = styled.div`
   line-height: 55px;
   color: red;
   text-align: center;
+  cursor: default;
   background-color: black;
   border: 0.5vh solid black;
   border-color: #666 #ddd #ddd #666;
@@ -53,6 +54,7 @@ const CountUpTimer = styled(Flagcouner)`
 const Face = styled.div<{ faceState: number }>`
   width: 70px;
   height: 70px;
+  cursor: pointer;
   background-image: url(${IMAGE});
   background-repeat: no-repeat;
   background-position: ${(props) => props.faceState * -58.6}px;
@@ -85,6 +87,7 @@ const BombBlock = styled.div<{ num: number }>`
   border: 1px solid #666;
 `
 const GameBlock = styled(BombBlock)<{ isOpen: boolean; num: number }>`
+  cursor: pointer;
   background-color: ${(props) => (props.isOpen ? '#bbb' : 'gray')};
   background-position: ${(props) => -36 * (props.num - 1)}px;
   background-size: 505px;
@@ -94,6 +97,7 @@ const GameBlock = styled(BombBlock)<{ isOpen: boolean; num: number }>`
       : 'border: 0.4px solid;' + 'border-color: #bbb #666 #666 #bbb;'}
 `
 const FlagBlock = styled(BombBlock)<{ num: number }>`
+  cursor: pointer;
   background-color: gray;
   background-position: ${(props) => -36 * (props.num - 3)}px 0;
   background-size: 507px;
@@ -124,6 +128,7 @@ const LevelButton = styled.div<{ isSelect: boolean }>`
   font-family: bold;
   color: #fff;
   text-decoration: none;
+  cursor: pointer;
   background-color: #f2545b;
   border-radius: 2px;
   box-shadow: 0 6px 0 #a4243b;
@@ -150,6 +155,7 @@ const OpenModalButton = styled.div`
   padding: 15px 20px;
   font-family: bold;
   color: #fff;
+  cursor: pointer;
   background-color: black;
   border-radius: 20%;
 
@@ -158,6 +164,46 @@ const OpenModalButton = styled.div`
     transition: 0.1s;
   }
 `
+const Manual = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 2px solid black;
+  transform: translateY(-50%) translateX(-50%);
+`
+const CloseButton = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 3;
+  font-size: 200%;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+    transition: 0.1s;
+  }
+`
+const customStyles: ReactModal.Styles = {
+  /* stylelint-disable */
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    backgroundColor: 'rgb(0 0 0 / 85%)',
+  },
+  /* stylelint-enable */
+  content: {
+    position: 'absolute',
+    top: '10%',
+    right: '10%',
+    bottom: '10%',
+    left: '10%',
+    backgroundColor: '#fff',
+    borderRadius: '10px',
+  },
+}
 
 const Home: NextPage = () => {
   const startBombs: { x: number; y: number }[] = []
@@ -355,9 +401,13 @@ const Home: NextPage = () => {
       </Head>
       <Container>
         <OpenModalButton onClick={() => setIsOpenModal(true)}>Manual</OpenModalButton>
-        <Modal isOpen={isOpenModal} onRequestClose={() => setIsOpenModal(false)}>
-          <button onClick={() => setIsOpenModal(false)}>close</button>
-          <h1>Hello World</h1>
+        <Modal
+          isOpen={isOpenModal}
+          onRequestClose={() => setIsOpenModal(false)}
+          style={customStyles}
+        >
+          <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
+          <Manual src="/images/manual.png"></Manual>
         </Modal>
         <SideMenu>
           <LevelButton onClick={() => reset(0)} isSelect={gameLevel === 0}>
