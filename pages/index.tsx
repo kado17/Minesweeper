@@ -380,6 +380,7 @@ const Home: NextPage = () => {
     setBoard(newBoard)
   }
 
+  //盤面の初期化
   const reset = (nextGameLevel: number) => {
     let nextGameConfig = gameConfig
     if (nextGameLevel !== gameLevel) {
