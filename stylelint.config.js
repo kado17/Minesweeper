@@ -10,7 +10,7 @@ module.exports = {
   rules: {
     'value-keyword-case': null,
     'unit-no-unknown': null,
-    'selector-type-no-unknown': ['ignore', ['default-namespace']],
+    'selector-type-no-unknown': { ignore: ['default-namespace'] },
   },
   customSyntax: 'postcss-jsx',
 }
