@@ -188,7 +188,14 @@ const Modal = styled.div`
   background-color: #fff;
   border-radius: 10px;
 `
-
+const Manual = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  border: 2px solid black;
+  transform: translateY(-50%) translateX(-50%);
+`
 const CloseButton = styled.div`
   position: absolute;
   top: 10px;
@@ -405,6 +412,7 @@ const Home: NextPage = () => {
         <Overlay isOpen={isOpenModal}>
           <Modal>
             <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
+            <Manual src="images/manual.png"></Manual>
           </Modal>
         </Overlay>
         <SideMenu>
