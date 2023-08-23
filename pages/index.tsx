@@ -412,7 +412,7 @@ const Home: NextPage = () => {
         <Overlay isOpen={isOpenModal}>
           <Modal>
             <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
-            <Manual src="images/manual.png"></Manual>
+            <Manual src="images/manual.png" loading="lazy"></Manual>
           </Modal>
         </Overlay>
         <SideMenu>
