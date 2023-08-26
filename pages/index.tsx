@@ -193,8 +193,15 @@ const Manual = styled.img`
   top: 50%;
   left: 50%;
   z-index: 3;
+  width: 80%;
+  cursor: pointer;
   border: 2px solid black;
   transform: translateY(-50%) translateX(-50%);
+
+  &:hover {
+    opacity: 0.8;
+    transition: 0.1s;
+  }
 `
 const CloseButton = styled.div`
   position: absolute;
@@ -412,7 +419,11 @@ const Home: NextPage = () => {
         <Overlay isOpen={isOpenModal}>
           <Modal>
             <CloseButton onClick={() => setIsOpenModal(false)}>×</CloseButton>
-            <Manual src="images/manual.png" loading="lazy"></Manual>
+            <Manual
+              src="images/manual.png"
+              loading="lazy"
+              onClick={() => window.open('images/manual.png', '_blank', 'noreferrer')}
+            ></Manual>
           </Modal>
         </Overlay>
         <SideMenu>
